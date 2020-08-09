@@ -25,6 +25,13 @@
                             attrs="{'invisible':
                                     [('state','in',['new','done'])]}"
                             class="oe_highlight"/> -->
+                    <!--
+                    <field name="stage_id" 
+                            widget="statusbar"
+                            clickable="True"
+                            status_visible="draft,open,done"/>
+                    -->
+
                     <field name="button_done"
                             type="Object"
                             string="Returned"
@@ -37,15 +44,7 @@
                            options="{'fold_field':'fold'}"/>
 
                 </header>
-                <sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids"
-                                widget="mail_followers"/>
-                        <field name="activity_ids"
-                                widget="mail_activity"/>
-                        <field name="message_ids"
-                                    widget="mail_thread"/>
-                    </div>
+                <sheet>                    
                     <field name="member_image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only"/>
@@ -55,8 +54,50 @@
                             <label for="user_id" class="oe_edit_only"/>
                             <field name="user_id" class="oe_inline"/>
                         </h3>
-                    </div>                        
-                </sheet>                
+                    </div>
+                    <group name="group_top">
+                        <group name="group_col1">
+                            <field name="user_id" />
+                            <field name="checkout_date"/>
+                        </group>
+                        <group name="group_col2">
+                            <field name="state" />
+                            <field name="closed_date"/>
+                        </group>
+                    </group>
+                <!--  
+                <group name="group_top">
+                    <group name="group_col1"
+                            col="4"
+                            colspan="2"
+                            string="Group 1">
+                        <field name="user_id"/>
+                        <field name="state" />
+                        <field name="checkout_date"/>
+                        <field name="closed_date" />
+                            
+                    </group>
+                    <group name="group_col2"
+                            string="Group 2"/>
+
+                </group>
+                -->
+                    <noteboo>
+                        <page string="Borrowed Books" name="page_lines">
+                            <field name="line_ids" />
+                        </pages>
+                    </notebook>
+
+                </sheet>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids"
+                                widget="mail_followers"/>
+                        <field name="activity_ids"
+                                widget="mail_activity"/>
+                        <field name="message_ids"
+                                    widget="mail_thread"/>
+                </div>
+                
             </form>
         </field>
     </record>
