@@ -22,6 +22,20 @@ class Checkout(models.Model):
     close_date = fields.Date(readonly=True)
     num_books = fields.Integer(compute='_compute_num_books', store=True)
     num_other_checkouts = fields.Integer(compute='_compute_num_other_checkouts')
+
+    color = fields.Integer('Color Index')
+    priority = fields.Selection([('0','Low'),
+                                ('1','Normal'),
+                                ('2','High')],
+                                'Priority',
+                                default='1')
+    kanban_state = fields.Selection([('normal','In Progress'),
+                                    ('blocked','Blocked'),
+                                    ('done','Ready for next stage')],
+                                    'Kanban State',
+                                    default='normal')
+
+
     
     def _compute_num_other_checkouts(self):
         for rec in self:

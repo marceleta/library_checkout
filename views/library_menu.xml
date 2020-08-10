@@ -3,7 +3,7 @@
     <act_window id="action_library_checkout"
         name="Checkouts"
         res_model="library.checkout"
-        view_mode="tree,form,activity,acalendar,graph,pivot"
+        view_mode="kanban,tree,form,activity,acalendar,graph,pivot"
         src_model="library.checkout"
         multi="true"/>
 

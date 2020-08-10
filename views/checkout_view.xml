@@ -67,17 +67,22 @@
                                 type="action"
                                 name="%(action_other_checkouts_button)d"
                                 context="{'default_member_id':'member_id'}">
+
                             <field string="To Return"
                                     name="num_other_checkouts"
                                     widget="statinfo"/>
                         </button>
-                    </div>                    
+                    </div>
+                    <field name="kanban_state" widget="state_selection" class="oe_right"/>                    
                     <field name="member_image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
-                        <label for="name" class="oe_edit_only"/>
-                        <h1><field name="name"/></h1>
+                        <label for="member_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="priority" widget="priority"/>
+                            <field name="member_id"/>
+                        </h1>
                         <h3>
-                            <spam class="oe_read_only">By</span>
+                            <span class="oe_read_only">By</span>
                             <label for="user_id" class="oe_edit_only"/>
                             <field name="user_id" class="oe_inline"/>
                         </h3>
