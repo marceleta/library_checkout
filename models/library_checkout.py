@@ -20,6 +20,24 @@ class Checkout(models.Model):
         string='Borrowed Books')
     checkout_date = fields.Date(readonly=True)
     close_date = fields.Date(readonly=True)
+    num_books = fields.Integer(compute='_compute_num_books', store=True)
+    num_other_checkouts = fields.Integer(compute='_compute_num_other_checkouts')
+    
+    def _compute_num_other_checkouts(self):
+        for rec in self:
+            domain = [
+                ('member_id','=',checkout.rec.id),
+                ('state','in',['open']),
+                ('id','!=',rec.id)]
+            rec.num_other_checkouts = self.search_count(domain)
+
+    @api.depends('line_ids')
+    def _compute_num_books(self):
+        for book in self:
+            book.num_books = len(book.line_ids)
+
+
+
 
     stage_id = fields.Many2one(
         'library.checkout.stage',

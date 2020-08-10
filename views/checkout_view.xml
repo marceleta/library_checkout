@@ -1,13 +1,27 @@
 <?xml version="1.0"?>
 
 <odoo>
+    <act_window id="action_other_checkouts_button"
+                name="Open Other Checkouts"
+                res_model="library.checkout"
+                view_mode="tree,form"
+                domain="[('member_id','=','default_member_id'),
+                         ('state','in',['open']),
+                         ('id', '!=', active_id)]"/>
+
     <record id="view_tree_checkout" model="ir.ui.view">
         <field name="name">Checkout Tree</field>
         <field name="model">library.checkout</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-muted="state in ['done','cancel']"
+                  decoration-bf="state=='open'">
+                
+                <field name="state" invisible="True"/>
                 <field name="request_date"/>
                 <field name="member_id" />
+                <field name="checkout_date"/>
+                <field name="stage_id" />
+                <field name="num_books" sum="# Books"/>
             </tree>
         </field>
     </record>
@@ -18,7 +32,7 @@
             <form>
                 <header>
                     <!--To add buttons and status widget -->
-                    <field name="state" invisible="True"/>
+                    
                     <!--<button name="button_done" 
                             type="object"
                             string="Return Books"
@@ -31,12 +45,13 @@
                             clickable="True"
                             status_visible="draft,open,done"/>
                     -->
-
+                    <field name="state" invisible="True"/>
                     <field name="button_done"
                             type="Object"
                             string="Returned"
                             states="open,cancel"
-                            class="oe_highlight"/>
+                            class="oe_highlight"
+                            icon="fa-floppy-o"/>
 
                     <field name="stage_id"
                            widget="statusbar"
@@ -44,7 +59,19 @@
                            options="{'fold_field':'fold'}"/>
 
                 </header>
-                <sheet>                    
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button"
+                                icon="fa-tasks"
+                                help="Other checkouts pending return"
+                                type="action"
+                                name="%(action_other_checkouts_button)d"
+                                context="{'default_member_id':'member_id'}">
+                            <field string="To Return"
+                                    name="num_other_checkouts"
+                                    widget="statinfo"/>
+                        </button>
+                    </div>                    
                     <field name="member_image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only"/>
@@ -56,11 +83,13 @@
                         </h3>
                     </div>
                     <group name="group_top">
-                        <group name="group_col1">
+                    <!--<separator/>-->
+                        <group string="Group 1" name="group_col1">
                             <field name="user_id" />
                             <field name="checkout_date"/>
                         </group>
-                        <group name="group_col2">
+                        <!--<newline/>-->
+                        <group string="Group 2" name="group_col2">
                             <field name="state" />
                             <field name="closed_date"/>
                         </group>
@@ -82,9 +111,15 @@
 
                 </group>
                 -->
-                    <noteboo>
+                    <notebook>
                         <page string="Borrowed Books" name="page_lines">
                             <field name="line_ids" />
+                            <tree>
+                                <field name="book_id" />
+                            </tree>
+                            <form>
+                                <field name="book_id" />
+                            </form>
                         </pages>
                     </notebook>
 
@@ -99,6 +134,55 @@
                 </div>
                 
             </form>
+        </field>
+    </record>
+    <record id="view_filter_checkout" model="ir.ui.view">
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="member_id"/>
+                <field name="user_id"/>
+                <filter name="filter_not_done"
+                        string="To Return"
+                        domain="[('state','=','open')]"/>
+                <filter name="filter_my_checkouts"
+                        string="My Checkouts"
+                        domain="[('user_id','=','uid')]"/>
+                <filter name="group_user"
+                        string="By Member"
+                        context="{'group_id':'member_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_calendar_checkout" model="ir.ui.view">
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <calendar date_start="request_date"
+                      color="user_id">
+                <field name="member_id" />
+                <field name="stage_id"/>
+            </calendar>
+        </field>
+    </record>
+    <record id="view_pivot_checkout" model="ir.ui.view">
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="stage_id" type="col"/>
+                <field name="member_id" />
+                <field name="request_date" interval="week" />
+                <field name="num_books" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="view_graph_checkout" model="ir.ui.view">
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="stage_id"/>
+                <field name="num_books" type="measure"/>
+            </graph>
         </field>
     </record>
 </odoo>
